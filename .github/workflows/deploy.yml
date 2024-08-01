@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      node_version:
+        description: "Node.js version"
+        required: true
+        default: "18"
+      build_command:
+        description: "Command to build the project"
+        required: false
+        default: "yarn build"
 
 jobs:
   test:
@@ -18,7 +27,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18"
+          node-version: ${{ github.event.inputs.node_version }}
 
-      - name: Show secrets
-        run: echo ${{secrets.GITHUB_TOKEN}}
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        if: ${{ github.event.inputs.build_command != '' }}
+        run: ${{ github.event.inputs.build_command }}
