@@ -1,0 +1,16 @@
+# Игнорируем node_modules, так как они будут устанавливаться в контейнере
+node_modules
+
+# Игнорируем файлы и директории, которые не нужны для сборки образа
+build
+.dockerignore
+Dockerfile
+docker-compose.yml
+Makefile
+.git
+.gitignore
+*.md
+*.log
+*.tmp
+
+.env.local
