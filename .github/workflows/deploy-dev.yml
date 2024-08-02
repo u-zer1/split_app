@@ -1,0 +1,48 @@
+name: Merge Changes
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Branch to merge into (navi_dev or motor_dev)"
+        required: true
+        default: "navi_dev"
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dev branch
+        uses: actions/checkout@v2
+        with:
+          ref: dev
+
+      - name: Validate target branch
+        run: |
+          # Fetch all branches
+          git fetch origin
+
+          # Define allowed branches
+          allowed_branches=("navi_dev" "motor_dev")
+
+          # Check if the target branch is in the list of allowed branches
+          if [[ ! " ${allowed_branches[@]} " =~ " ${github.event.inputs.target_branch} " ]]; then
+            echo "Error: Branch '${{ github.event.inputs.target_branch }}' is not allowed. Allowed branches are: ${allowed_branches[@]}."
+            exit 1
+          fi
+
+          # Check if the target branch exists
+          if ! git show-ref --verify --quiet refs/heads/${{ github.event.inputs.target_branch }}; then
+            echo "Error: Branch '${{ github.event.inputs.target_branch }}' does not exist."
+            exit 1
+          fi
+
+      - name: Merge dev into target branch
+        run: |
+          git checkout ${{ github.event.inputs.target_branch }}
+          git merge origin/dev --no-edit
+          git push origin ${{ github.event.inputs.target_branch }}
+
+      - name: Notify Success
+        run: echo "Successfully merged dev into ${{ github.event.inputs.target_branch }}"
