@@ -20,23 +20,18 @@ jobs:
 
       - name: Validate target branch
         run: |
-          # Fetch all branches
-          git fetch origin
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          ALLOWED_BRANCHES=("navi_dev" "motor_dev")
 
-          # Define allowed branches
-          allowed_branches=("navi_dev" "motor_dev")
-
-          # Check if the target branch is in the list of allowed branches
-          if [[ ! " ${allowed_branches[@]} " =~ " ${github.event.inputs.target_branch} " ]]; then
-            echo "Error: Branch '${{ github.event.inputs.target_branch }}' is not allowed. Allowed branches are: ${allowed_branches[@]}."
+          if [[ ! " ${ALLOWED_BRANCHES[@]} " =~ " ${TARGET_BRANCH} " ]]; then
+            echo "Error: Branch '${TARGET_BRANCH}' is not allowed. Allowed branches are: ${ALLOWED_BRANCHES[@]}."
             exit 1
           fi
 
-          # Check if the target branch exists
-          if ! git show-ref --verify --quiet refs/heads/${{ github.event.inputs.target_branch }}; then
-            echo "Error: Branch '${{ github.event.inputs.target_branch }}' does not exist."
-            exit 1
-          fi
+      - name: Checkout target branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.target_branch }}
 
       - name: Merge dev into target branch
         run: |
