@@ -9,6 +9,7 @@ const App: React.FC = () => {
       <h1>
         PROJECT NAME IS {AppName} and base url: {BaseUrl}
       </h1>
+      <h2>Navi dev</h2>
     </div>
   );
 };
