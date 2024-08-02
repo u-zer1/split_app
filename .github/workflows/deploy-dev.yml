@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       target_branch:
-        description: "Branch to merge into (navi_dev or motor_dev)"
+        description: 'Branch to merge into (navi_dev or motor_dev)'
         required: true
-        default: "navi_dev"
+        default: 'navi_dev'
 
 jobs:
   merge:
@@ -19,10 +19,13 @@ jobs:
           ref: dev
 
       - name: Validate target branch
+        env:
+          TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
         run: |
-          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          # Define allowed branches
           ALLOWED_BRANCHES=("navi_dev" "motor_dev")
 
+          # Check if the target branch is in the list of allowed branches
           if [[ ! " ${ALLOWED_BRANCHES[@]} " =~ " ${TARGET_BRANCH} " ]]; then
             echo "Error: Branch '${TARGET_BRANCH}' is not allowed. Allowed branches are: ${ALLOWED_BRANCHES[@]}."
             exit 1
