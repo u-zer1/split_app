@@ -6,11 +6,6 @@ on:
       environment:
         description: "Environment to deploy to"
         required: true
-        default: "production"
-      deploy_message:
-        description: "Deployment message"
-        required: false
-        default: "Deploy initiated via GitHub Actions"
 
 jobs:
   deploy:
@@ -25,37 +20,5 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build
-        run: yarn build
-
-      - name: Deploy to server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_IP: ${{ github.event.inputs.server }}
-        run: |
-          # Задайте переменные
-          REPO_DIR="/path/to/your/app"
-          GIT_BRANCH="main"
-
-          # Подключитесь к серверу и выполните развертывание
-          ssh -i <(echo "$SSH_PRIVATE_KEY") $SERVER_USER@$SERVER_IP << EOF
-            cd $REPO_DIR || { echo "Directory $REPO_DIR does not exist."; exit 1; }
-            git pull origin $GIT_BRANCH
-            yarn install
-            yarn build
-            pm2 restart all
-            echo "Deployment complete."
-          EOF
-
-      - name: Notify deployment
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const message = `${{ github.event.inputs.deploy_message }}`
-            const environment = `${{ github.event.inputs.environment }}`
-            console.log(`Deployment to ${environment}: ${message}`)
-            // Вы можете добавить другие действия для уведомления о развертывании
+      - name: log input
+        run: ${{ github.event.inputs.environment }}
