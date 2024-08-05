@@ -4,9 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       target_branch:
-        description: 'Branch to merge into (navi_dev or motor_dev)'
+        description: 'Log level'
         required: true
-        default: 'navi_dev'
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
 
 jobs:
   merge:

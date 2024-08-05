@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  app1:
+  navi:
     build:
       context: .
       dockerfile: Dockerfile.Motor
@@ -10,7 +10,7 @@ services:
     ports:
       - "3000:3000"
 
-  app2:
+  motor:
     build:
       context: .
       dockerfile: Dockerfile.Navi
